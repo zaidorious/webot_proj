@@ -5,7 +5,7 @@ sceneTreePerspectives: 000000ff00000001000000030000001c000000c0000000fa010000000
 maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
-textFiles: 0 "../../../../../../../../home/zaid/webot_proj/controllers/camera_status_publisher/camera_status_publisher.py"
+textFiles: 0 "controllers/camera_status_publisher/camera_status_publisher.py"
 globalOptionalRendering: LightSensorRays::LidarRaysPaths::LidarPointClouds
 consoles: Console:All:All
 renderingDevicePerspectives: vehicle:camera;1;7.07813;0.00172264;0.00264901

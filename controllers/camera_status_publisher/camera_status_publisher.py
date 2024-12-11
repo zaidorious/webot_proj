@@ -15,8 +15,10 @@ class LocalizationAndDetectionNode(Node):
         super().__init__('localization_and_detection')
 
         # Publishers
-        self.localization_publisher = self.create_publisher(PoseWithCovarianceStamped, '/localization/pose', 10)
-        self.detection_publisher = self.create_publisher(Int32MultiArray, '/detected_objects', 10)
+        self.localization_publisher = self.create_publisher(
+            PoseWithCovarianceStamped, '/localization/pose', 10)
+        self.detection_publisher = self.create_publisher(
+            Int32MultiArray, '/detected_objects', 10)
 
         # Webots Robot Initialization
         self.robot = Robot()
@@ -72,8 +74,10 @@ class LocalizationAndDetectionNode(Node):
         localization_msg.header.frame_id = "map"
 
         # Position (from GPS)
-        localization_msg.pose.pose.position.x = latitude  # Latitude (converted if needed)
-        localization_msg.pose.pose.position.y = longitude  # Longitude (converted if needed)
+        # Latitude (converted if needed)
+        localization_msg.pose.pose.position.x = latitude
+        # Longitude (converted if needed)
+        localization_msg.pose.pose.position.y = longitude
         localization_msg.pose.pose.position.z = altitude   # Altitude
 
         # Orientation (from IMU)
@@ -87,14 +91,16 @@ class LocalizationAndDetectionNode(Node):
         localization_msg.pose.covariance = [0.0] * 36
 
         self.localization_publisher.publish(localization_msg)
-        self.get_logger().info(f"Published Localization: Position ({latitude}, {longitude}, {altitude}), Orientation (roll={roll}, pitch={pitch}, yaw={yaw})")
+        self.get_logger().info(
+            f"Published Localization: Position ({latitude}, {longitude}, {altitude}), Orientation (roll={roll}, pitch={pitch}, yaw={yaw})")
 
     def publish_detections(self):
         # Capture camera image
         raw_image = self.camera.getImage()
         width = self.camera.getWidth()
         height = self.camera.getHeight()
-        image = np.frombuffer(raw_image, dtype=np.uint8).reshape((height, width, 4))  # BGRA format
+        image = np.frombuffer(raw_image, dtype=np.uint8).reshape(
+            (height, width, 4))  # BGRA format
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
 
         # Run YOLO inference
@@ -107,10 +113,12 @@ class LocalizationAndDetectionNode(Node):
                 for box in result.boxes:
                     class_id = int(box.cls[0])
                     confidence = float(box.conf[0])
-                    label = self.model.names[class_id] if self.model.names else f"class_{class_id}"
+                    label = self.model.names[
+                        class_id] if self.model.names else f"class_{class_id}"
 
                     if confidence > 0.5:  # Filter low-confidence detections
-                        code = self.object_codes.get(label, -1)  # Use -1 for unknown objects
+                        # Use -1 for unknown objects
+                        code = self.object_codes.get(label, -1)
                         if code != -1:
                             detected_codes.append(code)
 
@@ -121,7 +129,7 @@ class LocalizationAndDetectionNode(Node):
         self.detection_publisher.publish(msg)
         self.get_logger().info(f"Published Detections: {unique_codes}")
 
-           
+
 def main():
     rclpy.init()
 
